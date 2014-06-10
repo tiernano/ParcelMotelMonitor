@@ -47,12 +47,9 @@ namespace ParcelMotelChecker
 
         private static void Main(string[] args)
         {
-            if (args.Count() != 2)
-            {
-                Console.WriteLine("Expecting 2 arguments: Username and Password");
-                return;
-            }
-            var cookies = Login(args[0], args[1]);
+            string userName = ConfigurationManager.AppSettings["Username"];
+            string password = ConfigurationManager.AppSettings["Password"];
+            var cookies = Login(userName,password);
             List<ParcelMotelObject> packages = new List<ParcelMotelObject>();
             for (int i = 1; i <= 25; i++)
             {
@@ -76,9 +73,12 @@ namespace ParcelMotelChecker
                 string packageFile = string.Format("{0}.txt", obj.TrackingNumber);
                 if (!File.Exists(packageFile))
                 {
-                    string message = string.Format("Parcel {0} is new. Status: {1} Date: {2}", obj.TrackingNumber, obj.Status, obj.StatusTime);
-                    var resp = po.Push("New Parcel Motel Package", message, pushoverDevice);
-                    Console.WriteLine(resp.Status);
+                    if (obj.Status != "Delivered")
+                    {
+                        string message = string.Format("Parcel {0} is new. Status: {1} Date: {2}", obj.TrackingNumber, obj.Status, obj.StatusTime);
+                        var resp = po.Push("New Parcel Motel Package", message, pushoverDevice);
+                        Console.WriteLine(resp.Status);
+                    }
                     File.WriteAllText(packageFile, string.Format("{0};{1}", obj.Status, obj.StatusTime));
                 }
                 else
@@ -108,7 +108,7 @@ namespace ParcelMotelChecker
                 Console.WriteLine("Status: {0} number: {1}", status.Key, status.Count());
             }
 
-            Console.ReadLine();
+          
         }
 
         private static List<ParcelMotelObject> ParseHTML(string webtext)
