@@ -140,50 +140,6 @@ namespace ParcelMotelChecker
             }
             Console.WriteLine("Found {0} packages", packages.Count);
             return packages;
-            //foreach (HtmlNode tdNode in doc.DocumentNode.SelectNodes("//tr[@class='memberReportRow']//td"))
-            //{
-            //    switch (count % 9)
-            //    {
-            //        case 0:
-            //            parcel.Image = tdNode.InnerText.Trim();
-            //            break;
-
-            //        case 1:
-            //            parcel.CheckedIn = DateTime.Parse(tdNode.InnerText.Trim());
-            //            break;
-
-            //        case 2:
-            //            parcel.Location = tdNode.InnerText.Trim();
-            //            break;
-
-            //        case 3:
-            //            parcel.TrackingNumber = tdNode.InnerText.Trim();
-            //            break;
-
-            //        case 4:
-            //            parcel.NotificationMobile = tdNode.InnerText.Trim();
-            //            break;
-
-            //        case 5:
-            //            parcel.NotificationEmail = tdNode.InnerText.Trim();
-            //            break;
-
-            //        case 6:
-            //            parcel.PIN = tdNode.InnerText.Trim();
-            //            break;
-
-            //        case 7:
-            //            parcel.Status = tdNode.InnerText.Trim();
-            //            break;
-
-            //        case 8:
-            //            parcel.StatusTime = DateTime.Parse(tdNode.InnerText.Trim());
-            //            packages.Add(parcel);
-            //            parcel = new ParcelMotelObject();
-            //            break;
-            //    }
-            //    count++;
-            //}
         }
 
         private static HttpWebResponse Request(string URL, string ToPost, CookieContainer Cookies, string Referrer)
