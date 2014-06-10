@@ -64,6 +64,17 @@ namespace ParcelMotelChecker
                 }
             }
             Console.WriteLine("Found a total of {0} packages", packages.Count);
+            var locations = packages.GroupBy(x => x.Location);
+            var statuses = packages.GroupBy(x => x.Status);
+            foreach (var location in locations)
+            {
+                Console.WriteLine("location: {0} number: {1}", location.Key, location.Count());
+            }
+            foreach (var status in statuses)
+            {
+                Console.WriteLine("Status: {0} number: {1}", status.Key, status.Count());
+            }
+
             Console.ReadLine();
         }
 
