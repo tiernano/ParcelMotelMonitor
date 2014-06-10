@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
@@ -64,6 +65,38 @@ namespace ParcelMotelChecker
                 }
             }
             Console.WriteLine("Found a total of {0} packages", packages.Count);
+
+            string pushoverAPIKey = ConfigurationManager.AppSettings["POAPIKey"];
+            string pushoverDevice = ConfigurationManager.AppSettings["PODevice"];
+            //send notification...
+            PushoverClient.Pushover po = new PushoverClient.Pushover(pushoverAPIKey);
+
+            foreach (ParcelMotelObject obj in packages)
+            {
+                string packageFile = string.Format("{0}.txt", obj.TrackingNumber);
+                if (!File.Exists(packageFile))
+                {
+                    string message = string.Format("Parcel {0} is new. Status: {1} Date: {2}", obj.TrackingNumber, obj.Status, obj.StatusTime);
+                    var resp = po.Push("New Parcel Motel Package", message, pushoverDevice);
+                    Console.WriteLine(resp.Status);
+                    File.WriteAllText(packageFile, string.Format("{0};{1}", obj.Status, obj.StatusTime));
+                }
+                else
+                {
+                    string data = File.ReadAllText(packageFile);
+                    string[] oldData = data.Split(';');
+                    string oldStatus = oldData[0];
+                    DateTime oldDate = DateTime.Parse(oldData[1]);
+
+                    if (obj.Status != oldStatus)
+                    {
+                        string message = string.Format("Parcel {0} status changed from {1} to {2} at {3}", obj.TrackingNumber, oldStatus, obj.Status, obj.StatusTime);
+                        var resp = po.Push("New Parcel Motel Package", message, pushoverDevice);
+                        Console.WriteLine(resp.Status);
+                    }
+                }
+            }
+
             var locations = packages.GroupBy(x => x.Location);
             var statuses = packages.GroupBy(x => x.Status);
             foreach (var location in locations)
