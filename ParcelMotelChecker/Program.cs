@@ -93,6 +93,7 @@ namespace ParcelMotelChecker
                         string message = string.Format("Parcel {0} status changed from {1} to {2} at {3}", obj.TrackingNumber, oldStatus, obj.Status, obj.StatusTime);
                         var resp = po.Push("New Parcel Motel Package", message, pushoverDevice);
                         Console.WriteLine(resp.Status);
+                        File.WriteAllText(packageFile, string.Format("{0};{1}", obj.Status, obj.StatusTime)); // fixing bug #1 on github
                     }
                 }
             }
