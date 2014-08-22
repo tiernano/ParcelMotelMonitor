@@ -49,17 +49,34 @@ namespace ParcelMotelChecker
         {
             string userName = ConfigurationManager.AppSettings["Username"];
             string password = ConfigurationManager.AppSettings["Password"];
-            var cookies = Login(userName,password);
+            CookieContainer cookies;
+            try
+            {
+                cookies = Login(userName, password);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error getting login details...{0}... ending...",ex.Message);
+                return;
+            }
             List<ParcelMotelObject> packages = new List<ParcelMotelObject>();
             for (int i = 1; i <= 25; i++)
             {
-                string webtext = StreamToString(Request("http://www.parcelmotel.com/MyParcelMotel/Member/PackageHistoryPage?Page=" + i, null, cookies, "https://www.parcelmotel.com/MyParcelMotel/").GetResponseStream());
-                var result = ParseHTML(webtext);
-                packages.AddRange(result);
-                if (result.Count == 0)
+                try
                 {
-                    break;
+                    string webtext = StreamToString(Request("http://www.parcelmotel.com/MyParcelMotel/Member/PackageHistoryPage?Page=" + i, null, cookies, "https://www.parcelmotel.com/MyParcelMotel/").GetResponseStream());
+                    var result = ParseHTML(webtext);
+                    packages.AddRange(result);
+                    if (result.Count == 0)
+                    {
+                        break;
+                    }
                 }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Error getting text from Parcel Motel...: {0}", ex.Message);
+                }
+
             }
             Console.WriteLine("Found a total of {0} packages", packages.Count);
 
