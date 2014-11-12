@@ -6,6 +6,7 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using HtmlAgilityPack;
+using System.Threading.Tasks;
 
 namespace ParcelMotelChecker
 {
@@ -64,7 +65,9 @@ namespace ParcelMotelChecker
             {
                 try
                 {
-                    string webtext = StreamToString(Request("http://www.parcelmotel.com/MyParcelMotel/Member/PackageHistoryPage?Page=" + i, null, cookies, "https://www.parcelmotel.com/MyParcelMotel/").GetResponseStream());
+                    var stream = Request("http://www.parcelmotel.com/MyParcelMotel/Member/PackageHistoryPage?Page=" + i, null, cookies, "https://www.parcelmotel.com/MyParcelMotel/").GetResponseStream();
+
+                    string webtext = StreamToString(stream);
                     var result = ParseHTML(webtext);
                     packages.AddRange(result);
                     if (result.Count == 0)
@@ -217,7 +220,7 @@ namespace ParcelMotelChecker
             {
                 Request.Method = "GET";
             }
-            HttpWebResponse Response = (HttpWebResponse)Request.GetResponse();
+            HttpWebResponse Response =  (HttpWebResponse)(Request.GetResponse());
             Response.Cookies = Request.CookieContainer.GetCookies(Request.RequestUri);
             return Response;
         }
